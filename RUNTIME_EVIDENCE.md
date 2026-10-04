@@ -14,11 +14,19 @@ Every option opened with label `the Buyer`. The matrix uses the G5/R5 pair (see 
 
 | # | Wallet | Action in the app | Expected | Tx hash | Result | Status |
 |---|---|---|---|---|---|---|
-| P1 | author | Open G5 (`We decide which of the two routes is taken.`) | `PERFORMER_CHOOSES`, holder AUTHOR, OPEN | — | — | NOT RUN |
-| P2 | author | Open R5 (`The Buyer decides which of the two routes is taken.`) | `RECEIVER_CHOOSES`, holder RECEIVER, OPEN | — | — | NOT RUN |
-| P3 | receiver | Elect on R5, course `The long route` | ELECTED, `elected_by` = receiver | — | — | NOT RUN |
-| P4 | author | Elect on G5, course `The short route` | ELECTED, `elected_by` = author | — | — | NOT RUN |
-| P5 | receiver | Object on G5, note `We wanted the long route` | objection stored, election unchanged | — | — | NOT RUN |
+| P1 | author | Open G5 (`We decide which of the two routes is taken.`) | `PERFORMER_CHOOSES`, holder AUTHOR, OPEN | `0xcd520fac1a30d7e53692e86e2ad3ff01dd7be97f1cc8e1c3e5a94992372a51b5` | FINALIZED · SUCCESS · EP `PERFORMER_CHOOSES`; card *The choice belongs to the author (0x6276…57f4)* (see note) | PASS |
+| P2 | author | Open R5 (`The Buyer decides which of the two routes is taken.`) | `RECEIVER_CHOOSES`, holder RECEIVER, OPEN | `0xe4ebd865a713049f51ca8aa46ec944b069a4d29f9024293ca9eb40edf718da5d` | SUCCESS; card *The choice belongs to the Buyer (0x037f…1cde)* | PASS |
+| P3 | receiver | Elect on R5, course `The long route` | ELECTED, `elected_by` = receiver | `0x6362bece8eba2d17fd3a149d873a460e04c20bfeda6effcfed4693db9d0e92e1` | SUCCESS; `elected_by` `0x037f58e33c1ec8fda272361e0aac1e31054a1cde`, ✓ matches the elector wallet | PASS |
+| P4 | author | Elect on G5, course `The short route` | ELECTED, `elected_by` = author | `0x03991683cbd5172f9b7e5f3e2105b34b2c3dfa1b21e9428a092a48c4b086dddf` | SUCCESS; `elected_by` `0x6276095faea15108740445ff277fda8c304657f4`, ✓ matches the elector wallet | PASS |
+| P5 | receiver | Object on G5, note `We wanted the long route` | objection stored, election unchanged | `0x416789e5e1d64f98fb4a07813750d5efe5273d75ef70be0c838cdd828041781e` | SUCCESS; *objection by the other side: "We wanted the long route"*, course and `elected_by` unchanged | PASS |
+
+Run date 2026-10-04, through the live app with MetaMask. 5 transactions, all as expected.
+
+**Note on P1.** The first build of the app treated a leader receipt that said SUCCESS as final while validators were still
+in consensus, read the state too early and showed *"the receipt reports success but the accepted state does not show the
+expected change yet"*. The transaction itself was finalized with `PERFORMER_CHOOSES`, and loading the id a moment later
+showed the option OPEN with holder AUTHOR. The app was fixed (1.0.1: wait for ACCEPTED, then check the state) before P3;
+P2–P5 were reported as success by the app only after the reloaded state showed the change.
 
 Option ids (author `0x6276…57f4`, the same as on the Intelligent Contract because the id hashes author and text):
 G5 `480b104d9323573dee6299b4c6b65f773da6a2d81f5e42befd96f929c54ffc34` ·
@@ -26,11 +34,17 @@ R5 `451b16ab69de6f520260686b563b4f8cdddb3b886397127a8e21a84e54091f23`.
 
 ### Screenshots
 
-| # | What it must show | Status |
+| # | File | What it shows |
 |---|---|---|
-| 1 | Side by side, author connected, both OPEN: Elect **enabled** on G5, **disabled** on R5 with *"The choice here is not yours to make"*, both `elector_wallet` addresses in full | NOT RUN |
-| 2 | the same two cards with the receiver connected: the two buttons swapped | NOT RUN |
-| 3 | G5 after the election, author connected: course, `elected_by` in full matching `elector_wallet`, the receiver's objection, Withdraw disabled with *"This option has been elected; it can no longer be withdrawn"* | NOT RUN |
+| 1 | `docs/evidence/1-author-side-by-side.png` | author connected, both options OPEN, course typed on both: Elect **enabled** on G5 (*holds the choice here*), **disabled** on R5 with *"The choice here is not yours to make"*; both `elector_wallet` addresses in full |
+| 2 | `docs/evidence/2-receiver-side-by-side.png` | the same two cards with the receiver connected: the buttons swapped — G5 disabled with the same sentence, R5 enabled; Withdraw disabled on both with *"Only the author may withdraw this option"* |
+| 3 | `docs/evidence/3-author-after-election.png` | author connected after P5: G5 ELECTED "The short route", `elected_by` in full matching `elector_wallet`, the receiver's objection beside it, Withdraw disabled with *"This option has been elected; it can no longer be withdrawn"* |
+| — | `docs/evidence/4-receiver-elected-r5.png` | the receiver's view right after P3 |
+| — | `docs/evidence/5-author-elected-g5.png` | the author's view right after P4 |
+| — | `docs/evidence/6-receiver-objected-g5.png` | the receiver's view right after P5: Object on G5 now disabled with *"This election has already been objected to"* |
+
+The two reverting cells of the matrix were not sent through the app: screenshots 1 and 2 are their proof, and the
+Intelligent Contract run below has their transaction hashes (M1, M6).
 
 Calls the app already knows will revert are not sent: the button is disabled with the contract's sentence, and the
 proof is a screenshot, not a hash.

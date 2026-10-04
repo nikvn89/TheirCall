@@ -5,6 +5,7 @@
 - A leader receipt that says SUCCESS while validators are still proposing, committing, revealing or rotating the
   leader is now shown as *confirmation delayed*, not success; the app waits for ACCEPTED before checking the state.
 - *Check again* re-runs the same postcondition check and reloads the option.
+- Project run through the app with two wallets: 5 transactions and 3 screenshots, all as expected.
 
 ## 1.0.0 — 2026-10-04
 

@@ -12,7 +12,6 @@ choice, what that wallet elected, and whether the other side objected.
 
 | | |
 |---|---|
-| Live app | deployed on Vercel from this repository |
 | Project contract | [`0xB89D0Cbfd3572557D7090f85E1e6DEA5c167A3c7`](https://explorer-studio.genlayer.com/address/0xB89D0Cbfd3572557D7090f85E1e6DEA5c167A3c7) |
 | Intelligent Contract (separate submission) | `0xcdc35FbD8EC6453d5d8be228D5976625a40226b0` |
 | Source SHA-256 | `0ae947019525a9d499bd2b85225053c8eb8e68730f3d9c6ff256a4617c81267a` (`SOURCE_SHA256.txt`) |
@@ -35,6 +34,10 @@ yours to make"*. The only difference between the two options is the sentence.
 
 ## What the app shows
 
+![Author connected: Elect enabled on one option, disabled on the other](docs/evidence/1-author-side-by-side.png)
+
+![Receiver connected: the two buttons swap](docs/evidence/2-receiver-side-by-side.png)
+
 - **The holder, by full address**, on every option from the first read: *The choice belongs to the author (0x…)* or
   *The choice belongs to the Buyer (0x…)*, with `elector_wallet` and `objector_wallet` exactly as `get_option` returns
   them. The app never works out the holder itself.
@@ -46,6 +49,8 @@ yours to make"*. The only difference between the two options is the sentence.
 - The id of a new option is computed locally and shown before sending; the app checks the accepted state first and
   never sends a duplicate. Success is reported only after the leader receipt says SUCCESS and the reloaded state shows
   the change. A live meter blocks calldata over 255 bytes.
+
+![After both elections: elected_by in full, the objection, Withdraw locked](docs/evidence/3-author-after-election.png)
 
 ## How to try it
 
