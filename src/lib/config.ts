@@ -14,5 +14,5 @@ export const STUDIONET_CHAIN_HEX = "0xf22f";
 export const WALLET_ADD_RPC = "https://studio.genlayer.com/api";
 export const EXPLORER_BASE = "https://explorer-studio.genlayer.com";
 
-export const RECEIPT_TIMEOUT_MS = 60_000;
+export const RECEIPT_TIMEOUT_MS = 150_000;
 export const RECEIPT_POLL_MS = 3_000;

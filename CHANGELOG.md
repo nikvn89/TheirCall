@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 1.0.1 — 2026-10-04
+
+- A leader receipt that says SUCCESS while validators are still proposing, committing, revealing or rotating the
+  leader is now shown as *confirmation delayed*, not success; the app waits for ACCEPTED before checking the state.
+- *Check again* re-runs the same postcondition check and reloads the option.
+
 ## 1.0.0 — 2026-10-04
 
 - `WhoElects` contract frozen (SHA-256 `0ae947019525a9d499bd2b85225053c8eb8e68730f3d9c6ff256a4617c81267a`).

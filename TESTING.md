@@ -13,7 +13,7 @@ SUBMITTED ≠ ACCEPTED ≠ FINALIZED ≠ EXECUTION SUCCESS ≠ POSTCONDITION PAS
 | genvm-linter (AST, offline) | `python3 -m genvm_linter.cli lint contracts/WhoElects.py` | passed (3 checks), rc 0 |
 | genvm-linter schema / typecheck | `python3 -m genvm_linter.cli schema` / `typecheck` | 7 methods (4 write, 3 view); no type errors (run once, not in CI) |
 | contract tests, Direct Mode | `python3 -m pytest tests/contract -q` | 46 passed |
-| frontend logic tests | `npm test` | 43 passed |
+| frontend logic tests | `npm test` | 44 passed |
 | build | `npm run build` (`tsc -b && vite build`) | rc 0 |
 | source hash | `npm run verify:source` | PASS |
 | calldata table | `node tools/calldata-bytes.mjs` | every hard-block row ≤ 255 bytes |

@@ -11,6 +11,18 @@ test("SUCCESS on the leader receipt is success", () => {
   assert.equal(classifyTransaction(tx).kind, "success");
 });
 
+test("leader SUCCESS while consensus is still running is pending, not success", () => {
+  for (const status of ["PROPOSING", "COMMITTING", "REVEALING", "PENDING", 3, "4"]) {
+    const v = classifyTransaction({ status, consensus_data: { leader_receipt: [{ mode: "leader", execution_result: "SUCCESS" }] } });
+    assert.equal(v.kind, "pending", String(status));
+  }
+  for (const status of ["FINALIZED", 7, "5", "READY_TO_FINALIZE"]) {
+    const v = classifyTransaction({ status, consensus_data: { leader_receipt: [{ mode: "leader", execution_result: "SUCCESS" }] } });
+    assert.equal(v.kind, "success", String(status));
+  }
+  assert.equal(classifyTransaction({ status: 6, consensus_data: { leader_receipt: { mode: "leader", execution_result: "SUCCESS" } } }).kind, "error");
+});
+
 test("validator receipt listed first does not count; leader is found by mode", () => {
   const tx = { consensus_data: { leader_receipt: [
     { mode: "validator", execution_result: "SUCCESS" },

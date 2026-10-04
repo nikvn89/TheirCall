@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { CONTRACT_ADDRESS, EXPLORER_BASE } from "./lib/config";
 import { calldataBytes, CALLDATA_LIMIT } from "./lib/calldata";
 import { errorMessage } from "./lib/errors";
@@ -167,6 +167,7 @@ export default function App() {
   const [tab, setTab] = useState<Tab>("overview");
   const [tx, setTx] = useState<TxStatus>({ phase: "idle", message: "" });
   const [pendingHash, setPendingHash] = useState("");
+  const pendingJob = useRef<{ what: string; verified: () => Promise<boolean>; after?: () => Promise<void> } | null>(null);
   const [recent, setRecent] = useState<string[]>(readRecent);
 
   const [receiver, setReceiver] = useState("");
@@ -254,7 +255,8 @@ export default function App() {
   }
 
   /** Receipt first, then the postcondition on reloaded accepted state. */
-  async function runWrite(what: string, send: () => Promise<string>, verified: () => Promise<boolean>) {
+  async function runWrite(what: string, send: () => Promise<string>, verified: () => Promise<boolean>, after?: () => Promise<void>) {
+    pendingJob.current = { what, verified, after };
     let hash = "";
     try {
       setTx({ phase: "signing", message: `${what}: confirm in your wallet…` });
@@ -279,7 +281,7 @@ export default function App() {
       setTx({ phase: "error", message: `${what} reverted: ${verdict.reason}`, hash });
       return;
     }
-    for (let attempt = 0; attempt < 4; attempt += 1) {
+    for (let attempt = 0; attempt < 6; attempt += 1) {
       if (await verified()) {
         setPendingHash("");
         setTx({ phase: "success", message: `${what}: executed, and the accepted state shows the change.`, hash });
@@ -287,14 +289,15 @@ export default function App() {
       }
       await sleep(3000);
     }
-    setPendingHash("");
-    setTx({ phase: "error", message: `${what}: the receipt reports success but the accepted state does not show the expected change yet. Reload before acting again.`, hash });
+    setTx({ phase: "delayed", message: `${what}: the receipt reports success but the accepted state does not show the change yet. Do not resend; check again in a moment.`, hash });
   }
 
   async function checkAgain() {
     if (!pendingHash) return;
-    setTx({ phase: "submitted", message: "Checking the receipt again…", hash: pendingHash });
-    await finish("Pending transaction", pendingHash, async () => true);
+    const job = pendingJob.current;
+    setTx({ phase: "submitted", message: "Checking the receipt and the accepted state again…", hash: pendingHash });
+    await finish(job?.what ?? "Pending transaction", pendingHash, job?.verified ?? (async () => true));
+    if (job?.after) await job.after();
   }
 
   async function onOpen() {
@@ -316,6 +319,7 @@ export default function App() {
       "Open option",
       () => sendWrite(me, "open_option", [sub.receiverWallet, pyStrip(label), pyStrip(text)]),
       async () => openVerified(await getOption(sub.optionId), sub),
+      async () => { setCurrent(await getOption(sub.optionId)); },
     );
     remember(sub.optionId);
     setIdInput(sub.optionId);
@@ -326,18 +330,18 @@ export default function App() {
 
   async function onElect(o: Option, course: string) {
     const c = pyStrip(course);
-    await runWrite("Elect", () => sendWrite(me, "elect", [o.option_id, c]), async () => electVerified(await refresh(o.option_id), me, c));
+    await runWrite("Elect", () => sendWrite(me, "elect", [o.option_id, c]), async () => electVerified(await refresh(o.option_id), me, c), async () => { await refresh(o.option_id); });
     await refresh(o.option_id);
   }
 
   async function onObject(o: Option, note: string) {
     const n = pyStrip(note);
-    await runWrite("Object to election", () => sendWrite(me, "object_to_election", [o.option_id, n]), async () => objectVerified(o, await refresh(o.option_id), n));
+    await runWrite("Object to election", () => sendWrite(me, "object_to_election", [o.option_id, n]), async () => objectVerified(o, await refresh(o.option_id), n), async () => { await refresh(o.option_id); });
     await refresh(o.option_id);
   }
 
   async function onWithdraw(o: Option) {
-    await runWrite("Withdraw option", () => sendWrite(me, "withdraw_option", [o.option_id]), async () => withdrawVerified(await refresh(o.option_id)));
+    await runWrite("Withdraw option", () => sendWrite(me, "withdraw_option", [o.option_id]), async () => withdrawVerified(await refresh(o.option_id)), async () => { await refresh(o.option_id); });
     await refresh(o.option_id);
   }
 
