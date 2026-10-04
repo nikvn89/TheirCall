@@ -1,0 +1,59 @@
+{
+  "author": "0x3065e31b1d993d7c0d59e6786844cba56780b2d3",
+  "options": [
+    {
+      "text": "Either grade of material is open to us.",
+      "normalized": "Either grade of material is open to us.",
+      "py_len": 39,
+      "option_id": "38af98215401d72867a4a5654bb4df3592e8c5f519a69843cbd6aa0d65b59956"
+    },
+    {
+      "text": "Either grade of material is open to you.",
+      "normalized": "Either grade of material is open to you.",
+      "py_len": 40,
+      "option_id": "f8842ae044b7e440759aa872eda082d223f6550584460389aae96d6676f7a45c"
+    },
+    {
+      "text": "We may deliver to you in one shipment or in several.",
+      "normalized": "We may deliver to you in one shipment or in several.",
+      "py_len": 52,
+      "option_id": "184e2d311cbf10dd89fbd1b75f6a3fbbaee7cc8b8be8eae56e023586b11dd797"
+    },
+    {
+      "text": "You may require the work on site or remotely.",
+      "normalized": "You may require the work on site or remotely.",
+      "py_len": 45,
+      "option_id": "be9740447977d1a1e34c5b3ab8e7d7b91bf49a198ba6793708b364f78a8eace1"
+    },
+    {
+      "text": "  The Buyer may call\tfor delivery\nin one shipment or in several.  ",
+      "normalized": "The Buyer may call for delivery in one shipment or in several.",
+      "py_len": 62,
+      "option_id": "9c94d939caf0a42720cbd584e5e56be5873a9de79a7e3579933f03de23b2cc26"
+    },
+    {
+      "text": "\u001cWe decide which of the two routes is taken.\u001f",
+      "normalized": "We decide which of the two routes is taken.",
+      "py_len": 43,
+      "option_id": "588a2ee1764e6320348a1a51d476e4aa22f239629946be1714c8189ef5ebecb3"
+    },
+    {
+      "text": "Paymentmay\u001dbe taken\u001eby card.",
+      "normalized": "Payment may be taken by card.",
+      "py_len": 29,
+      "option_id": "4e1c02b051b8b386426d0081ba9ad27a8c9113c7ee2e7c21c5d97e4f672433dc"
+    },
+    {
+      "text": "﻿The pick is ours.",
+      "normalized": "﻿The pick is ours.",
+      "py_len": 18,
+      "option_id": "0d4bfa3d52e2e893bc0e3781774c559e055e1c1772d868fd87cb329e34171aec"
+    },
+    {
+      "text": "Livraison — au choix　de l'acheteur. 🚚",
+      "normalized": "Livraison — au choix de l'acheteur. 🚚",
+      "py_len": 37,
+      "option_id": "c9be61a4446c8af3f3aeaee670ccfdecfbd782d3e32f759a2122c35ba236c7e6"
+    }
+  ]
+}
